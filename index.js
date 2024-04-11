@@ -86,6 +86,9 @@ const fs = require("fs");
 // ---- http module get networking capabilites, build http server
 const http = require("http");
 
+// ---- URL module can pass some variable from URL
+const url = require("url");
+
 // ---- http.createServer accept callback func, "start each time new req hits server" (callback func get called) ***
 // ---- callback get access to -> req object: detail about request (ex. data)
 //                             -> res object: tool for dealing with res
@@ -133,13 +136,17 @@ const tempCard = fs.readFileSync(`${__dirname}/templates/template-card.html`, "u
 //get executed each time when new req coming, not top level code
 // ---- http.createServer -> create web server on ur computer
 const server = http.createServer((req, res) => {
-    console.log(req.url);
-    const pathName = req.url; // store current url from that req
+    console.log(req.url); //print whole url
+    console.log(url.parse(req.url, true));
+
+    //get(parse) url detail query(id) and pathname(url)
+    //true -> to parse query(url) into object (query string)
+    const { query, pathname } = url.parse(req.url, true); // store url detail from req
 
     // check url and sent differect res
 
     //OVERVIEW PAGE
-    if (pathName === "/overview" || pathName === "/") {
+    if (pathname === "/overview" || pathname === "/") {
         // loop through dataObj(array) and replace the placeholder im template with data
         res.writeHead(200, {
             "Content-type": "text-html",
@@ -151,21 +158,28 @@ const server = http.createServer((req, res) => {
 
         // replace card in overview template
         const overviewPage = tempOverview.replace("{%PRODUCT_CARDS%}", cardHtml);
-        res.end(overviewPage); //send overview template that already place all data
+        res.end(overviewPage); //send overview temp that already placed all data
 
-    //PRODUCT PAGE
-    } else if (pathName === "/product") {
-        res.end("This is the PRODUCT");
+        //PRODUCT PAGE
+    } else if (pathname === "/product") {
+        console.log(query);
 
-    //API
-    } else if (pathName === "/api") {
+        //get id from url as index to get that data element
+        const product = dataObj[query.id];
+
+        // replace data to product temp
+        const output = replaceTemplate(tempProduct, product);
+        res.end(output); //send product temp that already placed all data
+
+        //API
+    } else if (pathname === "/api") {
         res.writeHead(200, {
             "Content-type": "application/json",
         });
         console.log(dataObj);
         res.end(data);
 
-    // NOT FOUND PAGE
+        // NOT FOUND PAGE
     } else {
         res.writeHead(404, {
             "Content-type": "text-html", //server expect HTML
