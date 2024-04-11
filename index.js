@@ -71,6 +71,13 @@ const fs = require("fs");
 // ---- service, can request some data (ex. data that user wants to req is data about product that v r offering)
 // ---- data is what API will send to client when req
 
+// DYNAMIC WEBSITE
+// ---- building the template that hold actual data
+// ---- change data, web update on the site
+
+// ---- 1) build template for each page with placeholder
+// ---- 2) replace placeholder with real data with code
+
 // ---- http module get networking capabilites, build http server
 const http = require("http");
 
