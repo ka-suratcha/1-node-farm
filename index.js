@@ -43,16 +43,41 @@ const fs = require("fs");
 // ---- 1) fs func read file then store value into data1
 // ---- 2) data1 used in callback of another func and store value in data2
 
-fs.readFile("./txt/start.txt", "utf-8", (err, data1) => {
-    if (err) return console.log("!!! ERROR !!!"); //callback error handle -> in case file path is not correct (try change into incorrect path)
-    fs.readFile(`./txt/${data1}.txt`, "utf-8", (err, data2) => {
-        console.log(`${data2}\t(2nd run callback after read start.text is done)`);
-        fs.readFile(`./txt/append.txt`, "utf-8", (err, data3) => {
-            console.log(`${data3}\t\t\t\t(3nd run callback after read read-test.txt is done)`);
-            fs.writeFile("./txt/final.txt", `${data2}\n${data3}`, (err) => {
-                console.log("Your file has been written :D\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t(4nd run callback after write final.txt is done)");
-            });
-        });
-    });
+// fs.readFile("./txt/start.txt", "utf-8", (err, data1) => {
+//     if (err) return console.log("!!! ERROR !!!"); //callback error handle -> in case file path is not correct (try change into incorrect path)
+//     fs.readFile(`./txt/${data1}.txt`, "utf-8", (err, data2) => {
+//         console.log(`${data2}\t(2nd run callback after read start.text is done)`);
+//         fs.readFile(`./txt/append.txt`, "utf-8", (err, data3) => {
+//             console.log(`${data3}\t\t\t\t(3nd run callback after read read-test.txt is done)`);
+//             fs.writeFile("./txt/final.txt", `${data2}\n${data3}`, (err) => {
+//                 console.log("Your file has been written :D\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t(4nd run callback after write final.txt is done)");
+//             });
+//         });
+//     });
+// });
+// console.log("Will read file\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t(1st not get blocking by fs func)"); // not get blocked
+
+// SERVER
+// ---- open browser with ip as URL --> did req by hitting url --> callback func run
+
+// ---- 1) create server and running server
+// ---- 2) create listener to listen to incoming request from client
+// ---- app isnt stop cuz -> event loop
+
+// ---- http module get networking capabilites, build http server
+const http = require("http");
+
+// ---- http.createServer accept callback func, "start each time new req hits server" (callback func get called) ***
+// ---- callback get access to -> req object: detail about request (ex. data)
+//                             -> res object: tool for dealing with res
+// ---- save result of createServer method in to variable of create listener
+
+// ---- http.createServer -> create web server on ur computer
+const server = http.createServer((req, res) => {
+    res.end("Hello from the server"); // simple sending back res (plain text)
 });
-console.log("Will read file\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t(1st not get blocking by fs func)"); // not get blocked
+
+// ---- server.listen -> create listener (variable that store server to create listener)
+server.listen(8000, "127.0.0.1", () => {
+    console.log("Listening to req on port 8000"); // run as soon as server start listening (server is created and start listening request)
+});
