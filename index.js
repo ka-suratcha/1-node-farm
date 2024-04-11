@@ -87,6 +87,12 @@ const http = require("http");
 // ---- __dirname refer dir for that script
 // ---- res.end() -> send String
 
+// y use sync ver? -> top level code only executed once (code actually start), right in the beginning, use sync ver and its easier to handle that data
+// more efficient -> data only be readed once in the beginning not in callback which get executed everytime when new req coming
+const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
+const dataObj = JSON.parse(data); //JSON (String) -> JS (object/array) "JS format"
+
+//get executed each time when new req coming, not top level code
 // ---- http.createServer -> create web server on ur computer
 const server = http.createServer((req, res) => {
     console.log(req.url);
@@ -98,15 +104,11 @@ const server = http.createServer((req, res) => {
     } else if (pathName === "/product") {
         res.end("This is the PRODUCT");
     } else if (pathName === "/api") {
-        //read data, after finish -> run callback, store data in variable and print
-        fs.readFile(`${__dirname}/dev-data/data.json`, "utf-8", (err, data) => {
-            const productData = JSON.parse(data); //JSON (String) -> JS (object/array) "JS format"
-            res.writeHead(200, {
-                "Content-type": "application/json",
-            });
-            console.log(productData);
-            res.end(data);
+        res.writeHead(200, {
+            "Content-type": "application/json",
         });
+        console.log(dataObj);
+        res.end(data);
     } else {
         res.writeHead(404, {
             "Content-type": "text-html", //server expect HTML
