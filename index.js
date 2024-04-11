@@ -67,6 +67,10 @@ const fs = require("fs");
 // ROUTING
 // ---- implementing different action for different URLs
 
+// API
+// ---- service, can request some data (ex. data that user wants to req is data about product that v r offering)
+// ---- data is what API will send to client when req
+
 // ---- http module get networking capabilites, build http server
 const http = require("http");
 
@@ -78,6 +82,10 @@ const http = require("http");
 // ---- Express -> npm tool for do routing
 // ---- re.writeHead(<status_code>, <header>) -> send header
 // ---- Header -> piece of info about res that sending back (to inform ex. content type)
+// ---- JSON -> simple text format looks like JS obj which can have array
+// ---- dot (./) -> dir from v run the node cmd in tml
+// ---- __dirname refer dir for that script
+// ---- res.end() -> send String
 
 // ---- http.createServer -> create web server on ur computer
 const server = http.createServer((req, res) => {
@@ -89,6 +97,16 @@ const server = http.createServer((req, res) => {
         res.end("This is the OVERVIEW"); //send simple res -> simple plain text
     } else if (pathName === "/product") {
         res.end("This is the PRODUCT");
+    } else if (pathName === "/api") {
+        //read data, after finish -> run callback, store data in variable and print
+        fs.readFile(`${__dirname}/dev-data/data.json`, "utf-8", (err, data) => {
+            const productData = JSON.parse(data); //JSON (String) -> JS (object/array) "JS format"
+            res.writeHead(200, {
+                "Content-type": "application/json",
+            });
+            console.log(productData);
+            res.end(data);
+        });
     } else {
         res.writeHead(404, {
             "Content-type": "text-html", //server expect HTML
