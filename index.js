@@ -75,8 +75,13 @@ const fs = require("fs");
 // ---- building the template that hold actual data
 // ---- change data, web update on the site
 
+//      HTML SIDE
 // ---- 1) build template for each page with placeholder
 // ---- 2) replace placeholder with real data with code
+
+//      CODE SIDE
+// ---- 1) read template file in the beginning of code
+// ---- 2) replace with code
 
 // ---- http module get networking capabilites, build http server
 const http = require("http");
@@ -94,10 +99,36 @@ const http = require("http");
 // ---- __dirname refer dir for that script
 // ---- res.end() -> send String
 
-// y use sync ver? -> top level code only executed once (code actually start), right in the beginning, use sync ver and its easier to handle that data
+// y use sync ver to read file? -> top level code only executed once (code actually start), right in the beginning, use sync ver and its easier to handle that data
 // more efficient -> data only be readed once in the beginning not in callback which get executed everytime when new req coming
+// replace() g flag -> change all not just first one (act like replaceAll())
+
+//for replace product in JSON to HTML template
+const replaceTemplate = (temp, product) => {
+    let output = temp.replace(/{%ID%}/g, product.id);
+
+    // output variable for replace product in temp
+    // not good practice if directly manipulate the argument that pass into func
+    output = output.replace(/{%PRODUCTNAME%}/g, product.productName);
+    output = output.replace(/{%IMAGE%}/g, product.image);
+    output = output.replace(/{%FROM%}/g, product.from);
+    output = output.replace(/{%PRODUCTNUTRIENTNAME%}/g, product.nutrients);
+    output = output.replace(/{%QUANTITY%}/g, product.quantity);
+    output = output.replace(/{%PRICE%}/g, product.price);
+    output = output.replace(/{%DESCRIPTION%}/g, product.description);
+
+    // HTML class of not display organic
+    if (!product.organic) output = output.replace(/{%NOT_ORGANIC%}/g, "not-organic");
+    return output;
+};
+
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
-const dataObj = JSON.parse(data); //JSON (String) -> JS (object/array) "JS format"
+const dataObj = JSON.parse(data); //JSON (String) -> JS (object/array) "JS format" this get arrat of data
+
+// read template at top-level code (read once)
+const tempOverview = fs.readFileSync(`${__dirname}/templates/template-overview.html`, "utf-8");
+const tempProduct = fs.readFileSync(`${__dirname}/templates/template-product.html`, "utf-8");
+const tempCard = fs.readFileSync(`${__dirname}/templates/template-card.html`, "utf-8");
 
 //get executed each time when new req coming, not top level code
 // ---- http.createServer -> create web server on ur computer
@@ -106,16 +137,35 @@ const server = http.createServer((req, res) => {
     const pathName = req.url; // store current url from that req
 
     // check url and sent differect res
+
+    //OVERVIEW PAGE
     if (pathName === "/overview" || pathName === "/") {
-        res.end("This is the OVERVIEW"); //send simple res -> simple plain text
+        // loop through dataObj(array) and replace the placeholder im template with data
+        res.writeHead(200, {
+            "Content-type": "text-html",
+        });
+
+        // store cards that already be replace with data from dataObj
+        // .return as array -> use join() to connect it (change to String)
+        const cardHtml = dataObj.map((el) => replaceTemplate(tempCard, el)).join();
+
+        // replace card in overview template
+        const overviewPage = tempOverview.replace("{%PRODUCT_CARDS%}", cardHtml);
+        res.end(overviewPage); //send overview template that already place all data
+
+    //PRODUCT PAGE
     } else if (pathName === "/product") {
         res.end("This is the PRODUCT");
+
+    //API
     } else if (pathName === "/api") {
         res.writeHead(200, {
             "Content-type": "application/json",
         });
         console.log(dataObj);
         res.end(data);
+
+    // NOT FOUND PAGE
     } else {
         res.writeHead(404, {
             "Content-type": "text-html", //server expect HTML
