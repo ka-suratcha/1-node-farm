@@ -106,24 +106,8 @@ const url = require("url");
 // more efficient -> data only be readed once in the beginning not in callback which get executed everytime when new req coming
 // replace() g flag -> change all not just first one (act like replaceAll())
 
-//for replace product in JSON to HTML template
-const replaceTemplate = (temp, product) => {
-    let output = temp.replace(/{%ID%}/g, product.id);
-
-    // output variable for replace product in temp
-    // not good practice if directly manipulate the argument that pass into func
-    output = output.replace(/{%PRODUCTNAME%}/g, product.productName);
-    output = output.replace(/{%IMAGE%}/g, product.image);
-    output = output.replace(/{%FROM%}/g, product.from);
-    output = output.replace(/{%PRODUCTNUTRIENTNAME%}/g, product.nutrients);
-    output = output.replace(/{%QUANTITY%}/g, product.quantity);
-    output = output.replace(/{%PRICE%}/g, product.price);
-    output = output.replace(/{%DESCRIPTION%}/g, product.description);
-
-    // HTML class of not display organic
-    if (!product.organic) output = output.replace(/{%NOT_ORGANIC%}/g, "not-organic");
-    return output;
-};
+// export our own module
+const replaceTemplate = require("./modules/replaceTemplate");
 
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
 const dataObj = JSON.parse(data); //JSON (String) -> JS (object/array) "JS format" this get arrat of data
