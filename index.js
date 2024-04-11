@@ -67,6 +67,10 @@ const fs = require("fs");
 // ROUTING
 // ---- implementing different action for different URLs
 
+// API
+// ---- service, can request some data (ex. data that user wants to req is data about product that v r offering)
+// ---- data is what API will send to client when req
+
 // ---- http module get networking capabilites, build http server
 const http = require("http");
 
@@ -78,7 +82,17 @@ const http = require("http");
 // ---- Express -> npm tool for do routing
 // ---- re.writeHead(<status_code>, <header>) -> send header
 // ---- Header -> piece of info about res that sending back (to inform ex. content type)
+// ---- JSON -> simple text format looks like JS obj which can have array
+// ---- dot (./) -> dir from v run the node cmd in tml
+// ---- __dirname refer dir for that script
+// ---- res.end() -> send String
 
+// y use sync ver? -> top level code only executed once (code actually start), right in the beginning, use sync ver and its easier to handle that data
+// more efficient -> data only be readed once in the beginning not in callback which get executed everytime when new req coming
+const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
+const dataObj = JSON.parse(data); //JSON (String) -> JS (object/array) "JS format"
+
+//get executed each time when new req coming, not top level code
 // ---- http.createServer -> create web server on ur computer
 const server = http.createServer((req, res) => {
     console.log(req.url);
@@ -89,6 +103,12 @@ const server = http.createServer((req, res) => {
         res.end("This is the OVERVIEW"); //send simple res -> simple plain text
     } else if (pathName === "/product") {
         res.end("This is the PRODUCT");
+    } else if (pathName === "/api") {
+        res.writeHead(200, {
+            "Content-type": "application/json",
+        });
+        console.log(dataObj);
+        res.end(data);
     } else {
         res.writeHead(404, {
             "Content-type": "text-html", //server expect HTML
