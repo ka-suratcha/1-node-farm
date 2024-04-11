@@ -64,6 +64,9 @@ const fs = require("fs");
 // ---- 2) create listener to listen to incoming request from client
 // ---- app isnt stop cuz -> event loop
 
+// ROUTING
+// ---- implementing different action for different URLs
+
 // ---- http module get networking capabilites, build http server
 const http = require("http");
 
@@ -71,10 +74,28 @@ const http = require("http");
 // ---- callback get access to -> req object: detail about request (ex. data)
 //                             -> res object: tool for dealing with res
 // ---- save result of createServer method in to variable of create listener
+// ---- header and stats code always need to be sent before send that res
+// ---- Express -> npm tool for do routing
+// ---- re.writeHead(<status_code>, <header>) -> send header
+// ---- Header -> piece of info about res that sending back (to inform ex. content type)
 
 // ---- http.createServer -> create web server on ur computer
 const server = http.createServer((req, res) => {
-    res.end("Hello from the server"); // simple sending back res (plain text)
+    console.log(req.url);
+    const pathName = req.url; // store current url from that req
+
+    // check url and sent differect res
+    if (pathName === "/overview" || pathName === "/") {
+        res.end("This is the OVERVIEW"); //send simple res -> simple plain text
+    } else if (pathName === "/product") {
+        res.end("This is the PRODUCT");
+    } else {
+        res.writeHead(404, {
+            "Content-type": "text-html", //server expect HTML
+            "my-own-header": "hello wolrd",
+        });
+        res.end("<h1> Page not found! </h1>"); //try sending HTML
+    }
 });
 
 // ---- server.listen -> create listener (variable that store server to create listener)
