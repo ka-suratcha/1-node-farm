@@ -1,0 +1,28 @@
+<!-- get one figure (card) -->
+<!-- ex have 5 card, create 5 then put them together into 1 string and replace card in placeholder in overview-->
+<figure class="card">
+    <div class="card__emoji"><!-- 🥑🥑 -->{%IMAGE%}{%IMAGE%}</div>
+
+    <div class="card__title-box">
+        <h2 class="card__title"><!-- Fresh Avocado -->{%PRODUCTNAME%}</h2>
+    </div>
+
+    <div class="card__details">
+        <div class="card__detail-box">
+            <h6 class="card__detail card__detail--organic {%NOT_ORGANIC%}">Organic!</h6>
+        </div>
+
+        <div class="card__detail-box">
+            <h6 class="card__detail"><!-- 4 🥑 per 📦 -->{%QUANTITY%} per 📦</h6>
+        </div>
+
+        <div class="card__detail-box">
+            <h6 class="card__detail card__detail--price"><!-- 6.50€ -->{%PRICE%}€</h6>
+        </div>
+    </div>
+
+    <!-- a tag is for link in HTML href="<url>"-->
+    <a class="card__link" href="/product?id={%ID%}">
+        <span>Detail <i class="emoji-right">👉</i></span>
+    </a>
+</figure>
