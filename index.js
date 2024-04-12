@@ -5,7 +5,7 @@
 // ---- ES6 -> template string (`${}`), declaring variable with const instead of var
 
 // ---- fs module return object in which there r lots of func that can be used and restore into fd variable that can be used later
-const fs = require("fs");
+const fs = require('fs');
 
 // FILE
 // ==================================
@@ -15,15 +15,15 @@ const fs = require("fs");
 // ---- readFileSync is sync ver of file reading
 // ---- takes 2 arg -> fs.readFileSync(<file_path_for_read>, <character_encoded>)
 // ---- this fuc reads data from the file and returns it stored in a variable
-// const textIn = fs.readFileSync("./txt/input.txt", "utf8");
+// const textIn = fs.readFileSync('./txt/input.txt', 'utf8');
 // console.log(textIn);
 
 // ---- writeFileSync is sync ver of file writing
 // ---- takes 2 arg -> fs.writeFileSync(<file_path_for_write>, <variable(txt)_for_write>);
 // ---- before ES6 -> 'this is waht we know about the' + textIn
 // const textOut = `This is what we know about the avocado ${textIn}.\nCreated on ${Date.now()}`;
-// fs.writeFileSync("./txt/output.txt", textOut);
-// console.log("File written!");
+// fs.writeFileSync('./txt/output.txt', textOut);
+// console.log('File written!');
 
 // ---- node.js built around callback -> callback function
 // ---- do work in bg as soon as it ready(finish), will start callback function that specified
@@ -34,28 +34,28 @@ const fs = require("fs");
 
 // ---- error 1st callback is typical in node.js in case there was any
 // ---- when this func is run, it will reading this file in bg without blocking the rest of code execution
-// fs.readFile("./txt/start.txt", "utf-8", (err, data) => {
+// fs.readFile('./txt/start.txt', 'utf-8', (err, data) => {
 //     console.log(`${data}\t(2nd run callback after read start.txt is done)`);
 // });
-// console.log("Will read file\t(1st not get blocking by fs func)"); // not get blocked, show first while that func run in bg and when func finish will run thing in callback func
+// console.log('Will read file\t(1st not get blocking by fs func)'); // not get blocked, show first while that func run in bg and when func finish will run thing in callback func
 
 // ---- multiple step -----> !!!!! callback hell: callback in callback !!!!!
 // ---- 1) fs func read file then store value into data1
 // ---- 2) data1 used in callback of another func and store value in data2
 
-// fs.readFile("./txt/start.txt", "utf-8", (err, data1) => {
-//     if (err) return console.log("!!! ERROR !!!"); //callback error handle -> in case file path is not correct (try change into incorrect path)
-//     fs.readFile(`./txt/${data1}.txt`, "utf-8", (err, data2) => {
+// fs.readFile('./txt/start.txt', 'utf-8', (err, data1) => {
+//     if (err) return console.log('!!! ERROR !!!'); //callback error handle -> in case file path is not correct (try change into incorrect path)
+//     fs.readFile(`./txt/${data1}.txt`, 'utf-8', (err, data2) => {
 //         console.log(`${data2}\t(2nd run callback after read start.text is done)`);
-//         fs.readFile(`./txt/append.txt`, "utf-8", (err, data3) => {
+//         fs.readFile(`./txt/append.txt`, 'utf-8', (err, data3) => {
 //             console.log(`${data3}\t\t\t\t(3nd run callback after read read-test.txt is done)`);
-//             fs.writeFile("./txt/final.txt", `${data2}\n${data3}`, (err) => {
-//                 console.log("Your file has been written :D\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t(4nd run callback after write final.txt is done)");
+//             fs.writeFile('./txt/final.txt', `${data2}\n${data3}`, (err) => {
+//                 console.log('Your file has been written :D\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t(4nd run callback after write final.txt is done)');
 //             });
 //         });
 //     });
 // });
-// console.log("Will read file\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t(1st not get blocking by fs func)"); // not get blocked
+// console.log('Will read file\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t(1st not get blocking by fs func)'); // not get blocked
 
 // SERVER
 // ---- open browser with ip as URL --> did req by hitting url --> callback func run
@@ -83,13 +83,18 @@ const fs = require("fs");
 // ---- 1) read template file in the beginning of code
 // ---- 2) replace with code
 
+//BUILT-IN MODULE
 // ---- http module get networking capabilites, build http server
-const http = require("http");
+const http = require('http');
 
 // ---- URL module can pass some variable from URL
-const url = require("url");
+const url = require('url');
 
-// ---- http.createServer accept callback func, "start each time new req hits server" (callback func get called) ***
+//3RD PARTY MODULE
+// ---- require like built-in module
+const slugify = require('slugify');
+
+// ---- http.createServer accept callback func, 'start each time new req hits server' (callback func get called) ***
 // ---- callback get access to -> req object: detail about request (ex. data)
 //                             -> res object: tool for dealing with res
 // ---- save result of createServer method in to variable of create listener
@@ -107,15 +112,22 @@ const url = require("url");
 // replace() g flag -> change all not just first one (act like replaceAll())
 
 // export our own module
-const replaceTemplate = require("./modules/replaceTemplate");
+const replaceTemplate = require('./modules/replaceTemplate');
 
-const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
-const dataObj = JSON.parse(data); //JSON (String) -> JS (object/array) "JS format" this get arrat of data
+const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8');
+const dataObj = JSON.parse(data); //JSON (String) -> JS (object/array) 'JS format' this get arrat of data
+
+const slugs = dataObj.map(el => slugify(el.productName, { lower: true }));
+console.log(slugs);
+
+
+console.log(slugify('Fresh Avocados', { lower: true }));
+
 
 // read template at top-level code (read once)
-const tempOverview = fs.readFileSync(`${__dirname}/templates/template-overview.html`, "utf-8");
-const tempProduct = fs.readFileSync(`${__dirname}/templates/template-product.html`, "utf-8");
-const tempCard = fs.readFileSync(`${__dirname}/templates/template-card.html`, "utf-8");
+const tempOverview = fs.readFileSync(`${__dirname}/templates/template-overview.html`, 'utf-8');
+const tempProduct = fs.readFileSync(`${__dirname}/templates/template-product.html`, 'utf-8');
+const tempCard = fs.readFileSync(`${__dirname}/templates/template-card.html`, 'utf-8');
 
 //get executed each time when new req coming, not top level code
 // ---- http.createServer -> create web server on ur computer
@@ -130,10 +142,10 @@ const server = http.createServer((req, res) => {
     // check url and sent differect res
 
     //OVERVIEW PAGE
-    if (pathname === "/overview" || pathname === "/") {
+    if (pathname === '/overview' || pathname === '/') {
         // loop through dataObj(array) and replace the placeholder im template with data
         res.writeHead(200, {
-            "Content-type": "text-html",
+            'Content-type': 'text-html',
         });
 
         // store cards that already be replace with data from dataObj
@@ -141,11 +153,11 @@ const server = http.createServer((req, res) => {
         const cardHtml = dataObj.map((el) => replaceTemplate(tempCard, el)).join();
 
         // replace card in overview template
-        const overviewPage = tempOverview.replace("{%PRODUCT_CARDS%}", cardHtml);
+        const overviewPage = tempOverview.replace('{%PRODUCT_CARDS%}', cardHtml);
         res.end(overviewPage); //send overview temp that already placed all data
 
         //PRODUCT PAGE
-    } else if (pathname === "/product") {
+    } else if (pathname === '/product') {
         console.log(query);
 
         //get id from url as index to get that data element
@@ -156,9 +168,9 @@ const server = http.createServer((req, res) => {
         res.end(output); //send product temp that already placed all data
 
         //API
-    } else if (pathname === "/api") {
+    } else if (pathname === '/api') {
         res.writeHead(200, {
-            "Content-type": "application/json",
+            'Content-type': 'application/json',
         });
         console.log(dataObj);
         res.end(data);
@@ -166,14 +178,14 @@ const server = http.createServer((req, res) => {
         // NOT FOUND PAGE
     } else {
         res.writeHead(404, {
-            "Content-type": "text-html", //server expect HTML
-            "my-own-header": "hello wolrd",
+            'Content-type': 'text-html', //server expect HTML
+            'my-own-header': 'hello wolrd',
         });
-        res.end("<h1> Page not found! </h1>"); //try sending HTML
+        res.end('<h1> Page not found! </h1>'); //try sending HTML
     }
 });
 
 // ---- server.listen -> create listener (variable that store server to create listener)
-server.listen(8000, "127.0.0.1", () => {
-    console.log("Listening to req on port 8000"); // run as soon as server start listening (server is created and start listening request)
+server.listen(8000, '127.0.0.1', () => {
+    console.log('Listening to req on port 8000'); // run as soon as server start listening (server is created and start listening request)
 });
